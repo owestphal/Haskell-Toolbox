@@ -8,10 +8,13 @@ module Toolbox
         betweenLastAndFirst,
         mapPair,
         fileBaseName,
-        interactive
+        interactive,
+        interactive'
        ) where
 
 import Data.Tuple (swap)
+
+import Control.Monad.IO.Class (liftIO)
 
 -- Functions on Lists
 breakAtFirst :: Eq a => [a] -> a -> ([a],[a])
@@ -56,3 +59,11 @@ interactive prompt pred term suc = do
     then term xs
     else do suc xs
             interactive prompt pred term suc
+
+interactive' prompt pred term suc = do
+  liftIO prompt
+  xs <- liftIO getLine
+  if (pred == True)
+     then term xs
+     else do suc xs
+             interactive' prompt pred term suc 

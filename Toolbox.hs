@@ -1,4 +1,4 @@
-module Toolbox
+module HaskellToolbox.Toolbox
        (breakAtFirst,
         breakAtLast,
         beforeFirst,

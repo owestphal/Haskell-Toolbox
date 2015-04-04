@@ -9,12 +9,11 @@ module HaskellToolbox.Toolbox
         mapPair,
         fileBaseName,
         interactive,
-        interactive'
        ) where
 
 import Data.Tuple (swap)
 
-import Control.Monad.IO.Class (liftIO)
+import Control.Monad.IO.Class
 
 -- Functions on Lists
 breakAtFirst :: Eq a => [a] -> a -> ([a],[a])
@@ -47,23 +46,15 @@ fileBaseName :: FilePath -> String
 fileBaseName = (`betweenLastAndFirst` ('/','.'))
 
 -- IO Functions 
-interactive :: IO a
-               -> (String -> Bool)
-               -> (String -> IO b)
-               -> (String -> IO c)
-               -> IO b
+interactive :: MonadIO m => IO a
+                -> (String -> Bool)
+                -> (String -> m b)
+                -> (String -> m c)
+                -> m b
 interactive prompt pred term suc = do
-  prompt
-  xs <- getLine
-  if (pred xs == True)
-    then term xs
-    else do suc xs
-            interactive prompt pred term suc
-
-interactive' prompt pred term suc = do
   liftIO prompt
   xs <- liftIO getLine
-  if (pred == True)
+  if (pred xs == True)
      then term xs
      else do suc xs
-             interactive' prompt pred term suc 
+             interactive prompt pred term suc 
